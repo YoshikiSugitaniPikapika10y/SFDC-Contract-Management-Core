@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="請求アカウント設定" icon-name="standard:account">
+        <div class="slds-p-horizontal_small slds-p-bottom_small">
+            <template if:true={hasBillingAccount}>
+                <div class="readonly-field slds-m-bottom_medium">
+                    <div class="field-label">取引先</div>
+                    <div class="field-value">{billingCustomerAccountName}</div>
+                </div>
+                <div class="readonly-field slds-m-bottom_medium">
+                    <div class="field-label">請求アカウント</div>
+                    <div class="field-value">{billingAccountName}</div>
+                </div>
+                <c-estimate-wizard-custom-field-grid
+                    fields={billingFieldInputs}
+                    field-target="billingAccount"
+                    oncustomfieldchange={handleCustomFieldChange}>
+                </c-estimate-wizard-custom-field-grid>
+            </template>
+
+            <template if:false={hasBillingAccount}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    請求アカウントが未設定です。見積作成画面で請求アカウントを設定してから受注してください。
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

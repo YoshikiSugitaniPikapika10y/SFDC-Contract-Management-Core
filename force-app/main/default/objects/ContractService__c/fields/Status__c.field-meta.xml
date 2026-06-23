@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE(
+  LatestOrderedHistory__r.Type__c,
+  &quot;New&quot;, &quot;Active&quot;,
+  &quot;Change&quot;, &quot;Active&quot;,
+  &quot;Renew&quot;, &quot;Active&quot;,
+  &quot;Cancel&quot;, &quot;Pause&quot;,
+  &quot;&quot;
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>ステータス</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,160 @@
+<template>
+    <template if:true={hasBlocks}>
+        <div class="preview-scroll">
+            <template for:each={dateBlocks} for:item="block">
+                <section key={block.key} class="date-block">
+                    <header class="date-block-header">
+                        <div class="date-block-title">
+                            <span class="date-block-index">{block.blockNumber}</span>
+                            <div class="date-block-primary">
+                                <span class="date-block-badge">請求日</span>
+                                <span class="date-block-date">{block.invoiceDate}</span>
+                            </div>
+                        </div>
+                        <span class="date-block-count">{block.lineCount} 行</span>
+                    </header>
+
+                    <div class="table-wrap">
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th class="version-col">V</th>
+                                    <th>商品名</th>
+                                    <th>請求対象期間</th>
+                                    <th class="date-col">入金予定日</th>
+                                    <th class="num-col">金額</th>
+                                    <th class="num-col">税額</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={block.lines} for:item="row">
+                                    <tr key={row.key} class={row.rowClass}>
+                                        <td class="version-col">
+                                            <span class="version-text">{row.versionLabel}</span>
+                                        </td>
+                                        <td>{row.productName}</td>
+                                        <td class="muted">{row.periodLabel}</td>
+                                        <td class="date-col muted">{row.paymentScheduledDate}</td>
+                                        <td class="num-col">
+                                            <span class={row.amountClass}>
+                                                <lightning-formatted-number
+                                                    value={row.amount}
+                                                    format-style="currency"
+                                                    currency-code="JPY"
+                                                    maximum-fraction-digits="0">
+                                                </lightning-formatted-number>
+                                            </span>
+                                        </td>
+                                        <td class="num-col">
+                                            <span class={row.amountClass}>
+                                                <lightning-formatted-number
+                                                    value={row.taxAmount}
+                                                    format-style="currency"
+                                                    currency-code="JPY"
+                                                    maximum-fraction-digits="0">
+                                                </lightning-formatted-number>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="subtotal-label">小計（未ロック）</td>
+                                    <td class="num-col subtotal-value">
+                                        <lightning-formatted-number
+                                            value={block.unlockedSubtotal}
+                                            format-style="currency"
+                                            currency-code="JPY"
+                                            maximum-fraction-digits="0">
+                                        </lightning-formatted-number>
+                                    </td>
+                                    <td class="num-col subtotal-value">
+                                        <lightning-formatted-number
+                                            value={block.unlockedTaxSubtotal}
+                                            format-style="currency"
+                                            currency-code="JPY"
+                                            maximum-fraction-digits="0">
+                                        </lightning-formatted-number>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="subtotal-label">小計（ロック済）</td>
+                                    <td class="num-col subtotal-value subtotal-value_locked">
+                                        <lightning-formatted-number
+                                            value={block.lockedSubtotal}
+                                            format-style="currency"
+                                            currency-code="JPY"
+                                            maximum-fraction-digits="0">
+                                        </lightning-formatted-number>
+                                    </td>
+                                    <td class="num-col subtotal-value subtotal-value_locked">
+                                        <lightning-formatted-number
+                                            value={block.lockedTaxSubtotal}
+                                            format-style="currency"
+                                            currency-code="JPY"
+                                            maximum-fraction-digits="0">
+                                        </lightning-formatted-number>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </section>
+            </template>
+        </div>
+
+        <div class="grand-totals">
+            <div class="grand-total-row">
+                <span>合計（未ロック）{unlockedCount} 行</span>
+                <div class="grand-total-values">
+                    <span class="grand-total-label">金額</span>
+                    <span>
+                        <lightning-formatted-number
+                            value={unlockedSubtotal}
+                            format-style="currency"
+                            currency-code="JPY"
+                            maximum-fraction-digits="0">
+                        </lightning-formatted-number>
+                    </span>
+                    <span class="grand-total-label">税額</span>
+                    <span>
+                        <lightning-formatted-number
+                            value={unlockedTaxSubtotal}
+                            format-style="currency"
+                            currency-code="JPY"
+                            maximum-fraction-digits="0">
+                        </lightning-formatted-number>
+                    </span>
+                </div>
+            </div>
+            <div class="grand-total-row grand-total-row_locked">
+                <span>合計（ロック済）{lockedCount} 行</span>
+                <div class="grand-total-values">
+                    <span class="grand-total-label">金額</span>
+                    <span>
+                        <lightning-formatted-number
+                            value={lockedSubtotal}
+                            format-style="currency"
+                            currency-code="JPY"
+                            maximum-fraction-digits="0">
+                        </lightning-formatted-number>
+                    </span>
+                    <span class="grand-total-label">税額</span>
+                    <span>
+                        <lightning-formatted-number
+                            value={lockedTaxSubtotal}
+                            format-style="currency"
+                            currency-code="JPY"
+                            maximum-fraction-digits="0">
+                        </lightning-formatted-number>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template if:false={hasBlocks}>
+        <p class="empty-text">請求商品がありません。</p>
+    </template>
+</template>

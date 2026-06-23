@@ -1,0 +1,264 @@
+:host {
+    display: block;
+    min-height: 0;
+}
+
+.preview-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    background: #f3f3f3;
+}
+
+.date-block {
+    flex-shrink: 0;
+    border: 1px solid #c9c9c9;
+    border-radius: 0.375rem;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.date-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: #eef4fb;
+    border-bottom: 2px solid #0176d3;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.date-block-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.date-block-index {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: #0176d3;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.date-block-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: baseline;
+    min-width: 0;
+}
+
+.date-block-primary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.date-block-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    background: #0176d3;
+    color: #ffffff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+}
+
+.date-block-date {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #032d60;
+    letter-spacing: 0.02em;
+}
+
+.date-block-secondary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+}
+
+.date-block-count {
+    flex-shrink: 0;
+    padding: 0.25rem 0.625rem;
+    border-radius: 1rem;
+    background: #ffffff;
+    border: 1px solid #d8dde6;
+    color: #514f4d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.meta-label {
+    color: #706e6b;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.meta-value {
+    color: #080707;
+    font-weight: 600;
+}
+
+.table-wrap {
+    max-height: min(40vh, 20rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+
+.preview-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.preview-table th,
+.preview-table td {
+    padding: 0.5rem 0.625rem;
+    border-bottom: 1px solid #ecebea;
+    text-align: left;
+    vertical-align: top;
+}
+
+.preview-table th {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #706e6b;
+    background: #fafaf9;
+}
+
+.preview-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.preview-table tfoot td {
+    border-top: 1px solid #ecebea;
+    border-bottom: none;
+    background: #fafaf9;
+}
+
+.version-col {
+    width: 2.75rem;
+    text-align: center;
+}
+
+.version-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #514f4d;
+}
+
+.date-col {
+    white-space: nowrap;
+}
+
+.num-col {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.muted {
+    color: #706e6b;
+}
+
+.amount-normal {
+    color: #080707;
+}
+
+.amount-locked {
+    color: #706e6b;
+}
+
+.row-locked td {
+    color: #706e6b;
+}
+
+.row-adjustment {
+    background: #fcfcfc;
+}
+
+.subtotal-label {
+    text-align: right;
+    font-weight: 600;
+    color: #514f4d;
+}
+
+.subtotal-value {
+    font-weight: 600;
+}
+
+.subtotal-value_locked {
+    color: #706e6b;
+}
+
+.grand-totals {
+    flex-shrink: 0;
+    margin-top: 0.75rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    background: #fafaf9;
+}
+
+.grand-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.grand-total-values {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.grand-total-label {
+    color: #706e6b;
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+
+.grand-total-row + .grand-total-row {
+    border-top: 1px solid #ecebea;
+}
+
+.grand-total-row_locked {
+    color: #706e6b;
+    font-weight: 500;
+}
+
+.empty-text {
+    margin: 0;
+    color: #706e6b;
+    font-size: 0.875rem;
+}

@@ -1,0 +1,53 @@
+<template>
+    <div class={pageClass}>
+        <header class="revert-header">
+            <div>
+                <h1 class="revert-title">差し戻し</h1>
+                <p class="revert-subtitle">{historyName}</p>
+            </div>
+            <div class="revert-actions">
+                <button
+                    type="button"
+                    class="btn btn_secondary"
+                    onclick={handleClose}
+                    disabled={isBusy}>
+                    閉じる
+                </button>
+                <button
+                    type="button"
+                    class="btn btn_outline_danger"
+                    onclick={handleRevert}
+                    disabled={isRevertDisabled}
+                    title={revertBlockedReason}>
+                    Estimate に差し戻す
+                </button>
+            </div>
+        </header>
+
+        <template if:true={errorMessage}>
+            <div class="alert alert_error">{errorMessage}</div>
+        </template>
+
+        <main class="revert-body">
+            <template if:true={showBootstrapLoading}>
+                <div class="loading loading_full">
+                    <lightning-spinner alternative-text="読み込み中" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:false={showBootstrapLoading}>
+                <template if:true={hasContext}>
+                    <template if:true={showRevertBlockedNotice}>
+                        <div class="alert alert_warn" role="status">
+                            {revertBlockedReason}
+                        </div>
+                    </template>
+
+                    <p class="help-text">
+                        この契約履歴を Estimate に戻します。差し戻し可否は、この契約履歴に紐づく請求済・エクスポート済の請求商品の有無で判定します。
+                    </p>
+                </template>
+            </template>
+        </main>
+    </div>
+</template>

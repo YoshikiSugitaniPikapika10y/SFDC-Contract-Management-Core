@@ -1,0 +1,10 @@
+<template>
+    <div class={alertClass} role="alert" aria-live="assertive">
+        <p class="est-alert-title">{title}</p>
+        <ul class="est-alert-list">
+            <template for:each={messages} for:item="message">
+                <li key={message.key} class="est-alert-message">{message.text}</li>
+            </template>
+        </ul>
+    </div>
+</template>

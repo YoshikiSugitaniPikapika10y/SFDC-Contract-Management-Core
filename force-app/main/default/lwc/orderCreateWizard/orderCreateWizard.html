@@ -1,0 +1,65 @@
+<template>
+    <div class={pageClass}>
+        <template if:true={showMissingRecordError}>
+            <div class="ord-alert ord-alert_error">
+                契約履歴IDが取得できません。
+            </div>
+        </template>
+
+        <template if:false={showMissingRecordError}>
+            <header class="ord-header">
+                <div class="ord-header-top">
+                    <div>
+                        <h1 class="ord-title">受注</h1>
+                        <p class="ord-subtitle">請求設定の確認と受注</p>
+                    </div>
+                    <div class="ord-header-actions">
+                        <button
+                            type="button"
+                            class="ord-btn ord-btn_secondary"
+                            onclick={handleClose}
+                            disabled={isBusy}>
+                            閉じる
+                        </button>
+                        <button
+                            type="button"
+                            class="ord-btn ord-btn_secondary"
+                            onclick={handleSaveAndExit}
+                            disabled={isBusy}>
+                            保存して閉じる
+                        </button>
+                        <button
+                            type="button"
+                            class="ord-btn ord-btn_primary ord-btn_confirm"
+                            onclick={handleConfirmOrder}
+                            disabled={isBusy}>
+                            受注する
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <template if:true={errorMessage}>
+                <div class="ord-alert ord-alert_error ord-alert_banner">{errorMessage}</div>
+            </template>
+
+            <main class="ord-body">
+                <template if:true={showBootstrapLoading}>
+                    <div class="ord-loading ord-loading_full">
+                        <lightning-spinner alternative-text="読み込み中" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+
+                <template if:false={showBootstrapLoading}>
+                    <template if:true={hasContext}>
+                        <c-order-create-step-billing
+                            context={context}
+                            billing-custom-fields={billingCustomFields}
+                            onbillingfieldchange={handleBillingFieldChange}>
+                        </c-order-create-step-billing>
+                    </template>
+                </template>
+            </main>
+        </template>
+    </div>
+</template>

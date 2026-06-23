@@ -1,0 +1,36 @@
+.est-alert {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.est-alert_error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.est-alert_compact {
+    margin-top: 0.625rem;
+}
+
+.est-alert-title {
+    margin: 0 0 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.est-alert-list {
+    margin: 0;
+    padding-left: 1.125rem;
+}
+
+.est-alert-message {
+    margin: 0.25rem 0 0;
+    line-height: 1.45;
+}
+
+.est-alert-message:first-child {
+    margin-top: 0;
+}

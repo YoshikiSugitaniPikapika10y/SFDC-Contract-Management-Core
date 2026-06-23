@@ -1,0 +1,53 @@
+:host {
+    display: block;
+}
+
+.step-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.confirm-hero {
+    text-align: center;
+    background: linear-gradient(180deg, #eef4ff 0%, #ffffff 100%);
+    border-radius: 0.25rem;
+}
+
+.confirm-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.75rem;
+    border-radius: 50%;
+    background: #0176d3;
+    padding: 0.5rem;
+}
+
+.confirm-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+}
+
+.checklist {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.7;
+}
+
+.field-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #706e6b;
+    margin-bottom: 0.25rem;
+}
+
+.field-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+}

@@ -1,0 +1,17 @@
+:host {
+    display: block;
+}
+
+.panel-title {
+    margin: 0 0 0.375rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #080707;
+}
+
+.panel-help {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #706e6b;
+    line-height: 1.5;
+}

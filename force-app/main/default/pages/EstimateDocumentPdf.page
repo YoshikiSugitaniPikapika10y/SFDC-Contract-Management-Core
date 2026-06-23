@@ -1,0 +1,330 @@
+<apex:page contentType="application/pdf; charset=UTF-8"
+    renderAs="pdf"
+    controller="EstimateDocumentPdfController"
+    showHeader="false"
+    applyhtmltag="false"
+    language="ja"
+    cache="true">
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <style type="text/css">
+        @page {
+            size: A4;
+            margin: 18mm 16mm 20mm 16mm;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: "Arial Unicode MS", sans-serif;
+            font-size: 10pt;
+            color: #222222;
+            line-height: 1.4;
+        }
+        .page { width: 100%; }
+
+        .title-row {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .title {
+            font-size: 20pt;
+            font-weight: bold;
+            letter-spacing: 0.2em;
+            color: #222222;
+            border-bottom: 2px solid #222222;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+
+        .header { width: 100%; margin-bottom: 16px; overflow: hidden; }
+        .header::after { content: ""; display: block; clear: both; }
+        .header-left { float: left; width: 55%; }
+        .header-right { float: right; width: 42%; text-align: right; }
+
+        .addressee {
+            font-size: 12pt;
+            font-weight: bold;
+            border-bottom: 1px solid #222222;
+            padding-bottom: 6px;
+            margin-bottom: 14px;
+        }
+
+        .meta-table { width: 100%; border-collapse: collapse; }
+        .meta-table th, .meta-table td {
+            padding: 4px 0;
+            border-bottom: 1px solid #dddddd;
+            text-align: left;
+            vertical-align: top;
+            font-size: 9pt;
+        }
+        .meta-table th {
+            width: 90px;
+            font-weight: normal;
+            color: #666666;
+        }
+
+        .company-name {
+            font-size: 11pt;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .header-right p {
+            margin: 0 0 2px 0;
+            font-size: 9pt;
+            color: #444444;
+        }
+
+        .amount-block {
+            margin: 16px 0 20px 0;
+            padding: 8px 10px;
+            border: 1px solid #cccccc;
+            background-color: #f7f7f7;
+            text-align: center;
+        }
+        .amount-label {
+            font-weight: bold;
+            font-size: 11pt;
+            margin-right: 16px;
+        }
+        .amount-value {
+            font-weight: bold;
+            font-size: 16pt;
+            margin-right: 4px;
+        }
+        .amount-unit {
+            font-size: 10pt;
+        }
+
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .line-item-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border: 1px solid #cccccc;
+            margin-bottom: 10px;
+        }
+        .line-item-table th {
+            background-color: #f3f3f3;
+            border: 1px solid #cccccc;
+            padding: 5px 4px;
+            font-size: 9pt;
+            text-align: center;
+            font-weight: bold;
+        }
+        .line-item-table td {
+            border: 1px solid #cccccc;
+            padding: 6px 4px;
+            font-size: 9pt;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+        .line-item-table tr { page-break-inside: avoid; }
+
+        .col-name { width: 18%; text-align: left; }
+        .col-type { width: 8%; text-align: center; }
+        .col-qty { width: 8%; text-align: right; }
+        .col-unit { width: 8%; text-align: center; }
+        .col-price { width: 12%; text-align: right; }
+        .col-amount { width: 12%; text-align: right; }
+        .col-period { width: 18%; text-align: center; font-size: 8pt; }
+        .col-invoice { width: 16%; text-align: center; font-size: 8pt; }
+
+        .summary-table {
+            width: 45%;
+            float: right;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        .summary-table td {
+            padding: 5px 4px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 9pt;
+        }
+        .summary-label { color: #666666; }
+        .summary-value { text-align: right; font-weight: bold; }
+
+        .notes {
+            clear: both;
+            margin-top: 24px;
+            padding-top: 10px;
+            border-top: 1px solid #cccccc;
+            page-break-inside: avoid;
+        }
+        .notes-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .note-text {
+            white-space: pre-wrap;
+            font-size: 9pt;
+            line-height: 1.5;
+        }
+        .footer-note {
+            margin-top: 16px;
+            font-size: 8pt;
+            color: #666666;
+        }
+    </style>
+</head>
+
+<body>
+<apex:outputPanel rendered="{!hasContext}">
+<div class="page">
+
+    <div class="title-row">
+        <h1 class="title"><apex:outputText value="{!documentTitle}" /></h1>
+    </div>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="addressee">
+                <apex:outputText value="{!addresseeName}" />
+                <apex:outputPanel rendered="{!NOT(ISBLANK(addresseeName))}">
+                    御中
+                </apex:outputPanel>
+            </div>
+
+            <table class="meta-table">
+                <tr>
+                    <th>見積番号</th>
+                    <td><apex:outputText value="{!historyName}" /></td>
+                </tr>
+                <tr>
+                    <th>見積種別</th>
+                    <td><apex:outputText value="{!typeLabel}" /></td>
+                </tr>
+                <tr>
+                    <th>見積日</th>
+                    <td><apex:outputText value="{!estimateDateLabel}" /></td>
+                </tr>
+                <tr>
+                    <th>見積有効日</th>
+                    <td><apex:outputText value="{!validDateLabel}" /></td>
+                </tr>
+                <tr>
+                    <th>見積発行日</th>
+                    <td><apex:outputText value="{!issueDateLabel}" /></td>
+                </tr>
+                <tr>
+                    <th>契約期間</th>
+                    <td><apex:outputText value="{!termLabel}" /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="header-right">
+            <p class="company-name"><apex:outputText value="{!companyName}" /></p>
+            <p>〒100-0001</p>
+            <p>東京都千代田区サンプル1-2-3</p>
+            <p>TEL: 03-1234-5678</p>
+            <p>見積番号: <apex:outputText value="{!historyName}" /></p>
+            <p>発行日: <apex:outputText value="{!issueDateLabel}" /></p>
+        </div>
+    </div>
+
+    <div class="amount-block">
+        <span class="amount-label">見積合計</span>
+        <span class="amount-value">
+            <apex:outputText value="¥{0, number, ###,###,###}">
+                <apex:param value="{!lineTotalInclTax}" />
+            </apex:outputText>
+        </span>
+        <span class="amount-unit">（税込）</span>
+    </div>
+
+    <div class="section-title">見積明細</div>
+    <table class="line-item-table">
+        <thead>
+            <tr>
+                <th class="col-name">商品名</th>
+                <th class="col-type">種別</th>
+                <th class="col-qty">数量</th>
+                <th class="col-unit">単位</th>
+                <th class="col-price">単価</th>
+                <th class="col-amount">金額</th>
+                <th class="col-period">期間</th>
+                <th class="col-invoice">請求設定</th>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!lines}" var="line">
+                <tr>
+                    <td class="col-name"><apex:outputText value="{!line.productName}" /></td>
+                    <td class="col-type"><apex:outputText value="{!line.typeLabel}" /></td>
+                    <td class="col-qty">
+                        <apex:outputText value="{0, number, ###,##0.##}">
+                            <apex:param value="{!line.quantity}" />
+                        </apex:outputText>
+                    </td>
+                    <td class="col-unit"><apex:outputText value="{!line.unit}" /></td>
+                    <td class="col-price">
+                        <apex:outputText value="¥{0, number, ###,##0}">
+                            <apex:param value="{!line.unitPrice}" />
+                        </apex:outputText>
+                    </td>
+                    <td class="col-amount">
+                        <apex:outputText value="¥{0, number, ###,##0}">
+                            <apex:param value="{!line.amount}" />
+                        </apex:outputText>
+                    </td>
+                    <td class="col-period"><apex:outputText value="{!line.periodLabel}" /></td>
+                    <td class="col-invoice"><apex:outputText value="{!line.invoiceSetting}" /></td>
+                </tr>
+            </apex:repeat>
+        </tbody>
+    </table>
+
+    <table class="summary-table">
+        <tr>
+            <td class="summary-label">小計（税抜）</td>
+            <td class="summary-value">
+                <apex:outputText value="¥{0, number, ###,##0}">
+                    <apex:param value="{!lineTotal}" />
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr>
+            <td class="summary-label">
+                消費税（<apex:outputText value="{!taxPercentLabel}" />%）
+            </td>
+            <td class="summary-value">
+                <apex:outputText value="¥{0, number, ###,##0}">
+                    <apex:param value="{!taxAmount}" />
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr>
+            <td class="summary-label">合計（税込）</td>
+            <td class="summary-value">
+                <apex:outputText value="¥{0, number, ###,##0}">
+                    <apex:param value="{!lineTotalInclTax}" />
+                </apex:outputText>
+            </td>
+        </tr>
+    </table>
+
+    <apex:outputPanel rendered="{!NOT(ISBLANK(noteText))}">
+        <div class="notes">
+            <div class="notes-title">見積備考</div>
+            <div class="note-text"><apex:outputText value="{!noteText}" /></div>
+        </div>
+    </apex:outputPanel>
+
+    <div class="footer-note">
+        ※ 本見積書に記載の金額は税込表示です。
+    </div>
+
+</div>
+</apex:outputPanel>
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,619 @@
+<template>
+    <div class="est-step3">
+
+        <section class="est-panel est-panel_compact">
+            <div class="est-panel-header">
+                <h2 class="est-panel-title">Step 3 — 契約期間</h2>
+                <template if:true={isNewType}>
+                    <p class="est-panel-desc">新規作成する契約履歴の期間と商品明細を入力してください。</p>
+                </template>
+                <template if:false={isNewType}>
+                    <p class="est-panel-desc">ベース契約履歴をもとに、新しい契約履歴を作成します。</p>
+                </template>
+            </div>
+            <div class="est-panel-body">
+                <template if:true={showBaseHistoryContext}>
+                    <div class="est-history-context">
+                        <div class="est-history-context_item est-history-context_base">
+                            <span class="est-history-context_label">ベース</span>
+                            <span class="est-history-context_name">{baseHistoryName}</span>
+                            <span class="est-history-context_version">v.{displayBaseHistoryVersion}</span>
+                        </div>
+                        <span class="est-history-context_arrow" aria-hidden="true">→</span>
+                        <div class="est-history-context_item est-history-context_new">
+                            <span class="est-history-context_label">作成</span>
+                            <span class="est-history-context_version">v.{displayNewHistoryVersion}</span>
+                        </div>
+                    </div>
+                </template>
+                <div class="est-field-grid est-field-grid_period">
+                    <div class="est-field est-field_service">
+                        <span class="est-label">契約サービス名</span>
+                        <div class="est-value">{contractServiceName}</div>
+                    </div>
+                    <div class="est-field">
+                        <template if:true={isNewType}>
+                            <span class="est-label est-label_required">契約履歴名</span>
+                        </template>
+                        <template if:false={isNewType}>
+                            <span class="est-label est-label_required">作成する契約履歴名</span>
+                        </template>
+                        <lightning-input
+                            type="text"
+                            label="契約履歴名"
+                            value={contractHistoryName}
+                            variant="label-hidden"
+                            onchange={handleContractHistoryNameChange}
+                            required>
+                        </lightning-input>
+                    </div>
+                    <div class="est-field est-field_version">
+                        <template if:true={isNewType}>
+                            <span class="est-label">Version</span>
+                        </template>
+                        <template if:false={isNewType}>
+                            <span class="est-label">作成 Version</span>
+                        </template>
+                        <div class="est-value">{displayNewHistoryVersion}</div>
+                    </div>
+                    <div class="est-period-dates">
+                        <div class="est-field">
+                            <span class="est-label est-label_required">期間開始日</span>
+                            <template if:true={isStartDateReadonly}>
+                                <div class="est-value">{contractStartDate}</div>
+                            </template>
+                            <template if:false={isStartDateReadonly}>
+                                <input
+                                    type="text"
+                                    class="est-date-input"
+                                    aria-label="期間開始日"
+                                    placeholder="YYYY-MM-DD"
+                                    value={contractStartDate}
+                                    maxlength="10"
+                                    onchange={handleContractStartDateChange}>
+                            </template>
+                        </div>
+                        <div class="est-field">
+                            <span class="est-label est-label_required">期間終了日</span>
+                            <template if:true={isEndDateReadonly}>
+                                <div class="est-value">{contractEndDate}</div>
+                            </template>
+                            <template if:false={isEndDateReadonly}>
+                                <input
+                                    type="text"
+                                    class="est-date-input"
+                                    aria-label="期間終了日"
+                                    placeholder="YYYY-MM-DD"
+                                    value={contractEndDate}
+                                    maxlength="10"
+                                    onchange={handleContractEndDateChange}>
+                                <template if:true={showContractEndDateShortcuts}>
+                                    <div class="est-date-shortcuts est-date-shortcuts_header">
+                                        <button type="button" class="est-date-chip" title="終了日を1年進める" onclick={handleFillContractEndOneYear}>+1y</button>
+                                        <button type="button" class="est-date-chip" title="終了日を1年戻す" onclick={handleFillContractEndMinusOneYear}>-1y</button>
+                                        <button type="button" class="est-date-chip" title="終了日を1ヶ月進める" onclick={handleFillContractEndOneMonth}>+1m</button>
+                                        <button type="button" class="est-date-chip" title="終了日を1ヶ月戻す" onclick={handleFillContractEndMinusOneMonth}>-1m</button>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="est-period-dates est-period-dates_meta">
+                        <div class="est-field">
+                            <span class="est-label est-label_required">有効日</span>
+                            <template if:true={isEffectiveDateReadonly}>
+                                <div class="est-value">{contractEffectiveDate}</div>
+                            </template>
+                            <template if:false={isEffectiveDateReadonly}>
+                                <input
+                                    type="text"
+                                    class="est-date-input"
+                                    aria-label="有効日"
+                                    placeholder="YYYY-MM-DD"
+                                    value={contractEffectiveDate}
+                                    maxlength="10"
+                                    onchange={handleEffectiveDateChange}>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <template if:true={headerDateError}>
+                    <div class="est-alert est-alert_error est-alert_compact">{headerDateError}</div>
+                </template>
+            </div>
+        </section>
+
+        <template if:true={isChangeType}>
+            <template if:true={isLoadingChangeProducts}>
+                <div class="est-loading">
+                    <lightning-spinner alternative-text="読込中" size="small"></lightning-spinner>
+                </div>
+            </template>
+            <template if:true={changeLoadError}>
+                <div class="est-alert est-alert_error">{changeLoadError}</div>
+            </template>
+        </template>
+
+        <template if:true={isRenewType}>
+            <template if:true={isLoadingRenewProducts}>
+                <div class="est-loading">
+                    <lightning-spinner alternative-text="読込中" size="small"></lightning-spinner>
+                </div>
+            </template>
+            <template if:true={renewLoadError}>
+                <div class="est-alert est-alert_error">{renewLoadError}</div>
+            </template>
+        </template>
+
+        <template if:true={isCancelType}>
+            <template if:true={cancelLoadError}>
+                <div class="est-alert est-alert_error">{cancelLoadError}</div>
+            </template>
+        </template>
+
+        <template if:true={isLoadingDates}>
+            <div class="est-loading est-loading_inline">
+                <lightning-spinner alternative-text="日付読込中" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={showProductTable}>
+            <template if:true={showHeaderDatePrompt}>
+                <div class="est-alert est-alert_info">{headerDatePromptMessage}</div>
+            </template>
+            <section class="est-panel est-panel_table">
+                <div class="est-panel-header est-panel-header_row">
+                    <div>
+                        <h2 class="est-panel-title">商品明細</h2>
+                        <template if:true={isChangeType}>
+                            <p class="est-panel-desc">変更対象商品は Original + Remake、新規追加分は下部の「新しい商品」に New で入力します。</p>
+                        </template>
+                    </div>
+                    <template if:true={showAddRowButton}>
+                        <button type="button" class="est-btn-add" onclick={handleAddRow}>
+                            <lightning-icon icon-name="utility:add" size="xx-small"></lightning-icon>
+                            行を追加
+                        </button>
+                    </template>
+                </div>
+
+                <div class={productTableScrollClass}>
+                    <table class="est-table">
+                        <colgroup>
+                            <col class="est-col-no">
+                            <col class="est-col-type">
+                            <col class="est-col-product">
+                            <col class="est-col-price">
+                            <col class="est-col-qty">
+                            <col class="est-col-amount">
+                            <col class="est-col-date">
+                            <col class="est-col-date est-col-date_end">
+                            <col class="est-col-invoice">
+                            <col class="est-col-actions">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="est-th est-th-center">#</th>
+                                <th scope="col" class="est-th est-th-left">種別</th>
+                                <th scope="col" class="est-th est-th-left">商品</th>
+                                <th scope="col" class="est-th est-th-right">単価</th>
+                                <th scope="col" class="est-th est-th-right">数量</th>
+                                <th scope="col" class="est-th est-th-right">金額</th>
+                                <th scope="col" class="est-th est-th-left">開始日</th>
+                                <th scope="col" class="est-th est-th-left">終了日</th>
+                                <th scope="col" class="est-th est-th-left">請求設定</th>
+                                <th scope="col" class="est-th est-th-center est-th-actions"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={displayItemList} for:item="item">
+                                <template if:true={item.isGroupHeader}>
+                                    <tr key={item.id} class="est-change-group-header-row">
+                                        <td colspan="10">
+                                            <div class={item.groupHeaderClass}>
+                                                <div class="est-change-group-card__header-text">
+                                                    <span class="est-change-group-card__title">{item.groupHeaderTitle}</span>
+                                                    <span class="est-change-group-card__subtitle">{item.groupHeaderSubtitle}</span>
+                                                </div>
+                                                <template if:true={item.isSectionHeader}>
+                                                    <button
+                                                        type="button"
+                                                        class="est-btn-add est-btn-add_section"
+                                                        onclick={handleAddChangeNewProduct}>
+                                                        <lightning-icon icon-name="utility:add" size="xx-small"></lightning-icon>
+                                                        行を追加
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template if:false={item.isGroupHeader}>
+                                <tr key={item.id} class={item.tableRowClass}>
+                                    <td class="est-td est-td-center est-td-no">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_center">
+                                                <template if:true={item.showLineNumber}>
+                                                    <span class="est-cell-static">{item.lineNumberLabel}</span>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub"></div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-left est-td-type">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_left">
+                                                <span class={item.typeBadgeClass}>{item.typeBadgeLabel}</span>
+                                            </div>
+                                            <div class="est-cell-stack__sub"></div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-left est-td-product">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_left">
+                                                <template if:true={item.isReadonly}>
+                                                    <span class="est-cell-static" title={item.productName}>{item.productName}</span>
+                                                </template>
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-cell-field est-cell-field_link">
+                                                        <button
+                                                            type="button"
+                                                            class="est-cell-link"
+                                                            data-id={item.id}
+                                                            title={item.productName}
+                                                            onclick={handleOpenProductModal}>
+                                                            <template if:true={item.productName}>{item.productName}</template>
+                                                            <template if:false={item.productName}>商品を検索...</template>
+                                                        </button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub"></div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-right est-td-price">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_right">
+                                                <template if:true={item.isReadonly}>
+                                                    <span class="est-cell-static est-cell-static_num">{item.unitPrice}</span>
+                                                </template>
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-cell-field">
+                                                        <input
+                                                            type="number"
+                                                            class="est-cell-input est-cell-input_num"
+                                                            aria-label="単価"
+                                                            value={item.unitPrice}
+                                                            data-id={item.id}
+                                                            onchange={handleUnitPriceChange}
+                                                            required>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub est-cell-stack__sub_right">
+                                                <template if:true={item.showPriceMeta}>
+                                                    <div class="est-price-meta">
+                                                        <template if:true={item.isReadonly}>
+                                                            <span class="est-price-meta-static">
+                                                                <template if:true={item.showPriceCycle}>{item.priceCycleLabel}</template>
+                                                                <template if:true={item.displayUnitName}>
+                                                                    <template if:true={item.showPriceCycle}>・</template>{item.displayUnitName}
+                                                                </template>
+                                                            </span>
+                                                        </template>
+                                                        <template if:false={item.isReadonly}>
+                                                            <template if:true={item.showPriceCycle}>
+                                                                <span class="est-price-meta-static">{item.priceCycleLabel}</span>
+                                                            </template>
+                                                            <template if:true={item.displayUnitName}>
+                                                                <template if:true={item.showPriceCycle}>
+                                                                    <span class="est-meta-sep">・</span>
+                                                                </template>
+                                                                <span class="est-price-meta-static">{item.displayUnitName}</span>
+                                                            </template>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-right est-td-qty">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_right">
+                                                <template if:true={item.isReadonly}>
+                                                    <span class="est-cell-static est-cell-static_num">{item.quantity}</span>
+                                                </template>
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-cell-field">
+                                                        <input
+                                                            type="number"
+                                                            class="est-cell-input est-cell-input_num"
+                                                            aria-label="数量"
+                                                            value={item.quantity}
+                                                            min="1"
+                                                            step="1"
+                                                            data-id={item.id}
+                                                            onchange={handleQuantityChange}
+                                                            required>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub"></div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-right est-td-amount">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_right">
+                                                <template if:true={item.amountInvalid}>
+                                                    <span class="est-cell-amount est-amount-invalid" title="開始日・終了日が課金単位期間の倍数ではありません">—</span>
+                                                </template>
+                                                <template if:false={item.amountInvalid}>
+                                                    <span class="est-cell-amount">
+                                                        <lightning-formatted-number
+                                                            value={item.amount}
+                                                            format-style="decimal"
+                                                            minimum-fraction-digits="0"
+                                                            maximum-fraction-digits="2">
+                                                        </lightning-formatted-number>
+                                                    </span>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub"></div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-left est-td-date">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_left">
+                                                <template if:true={item.isReadonly}>
+                                                    <span class="est-cell-static">{item.startDate}</span>
+                                                </template>
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-cell-field">
+                                                        <input
+                                                            type="text"
+                                                            class="est-cell-input"
+                                                            aria-label="開始日"
+                                                            placeholder="YYYY-MM-DD"
+                                                            value={item.startDate}
+                                                            maxlength="10"
+                                                            data-id={item.id}
+                                                            data-field="startDate"
+                                                            onchange={handleLineDateInputChange}
+                                                            required>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub est-cell-stack__sub_left">
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-date-shortcuts est-date-shortcuts_nowrap">
+                                                        <template if:true={item.canCopyDatesFromAbove}>
+                                                            <button type="button" class="est-date-chip" data-id={item.id} data-field="startDate" title="上の行の開始日をコピー" onclick={handleCopyDateFromAbove}>上</button>
+                                                        </template>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="期間開始日をセット" onclick={handleFillLineStartFromContract}>start</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="開始日を1年進める" onclick={handleFillLineStartOneYear}>+1y</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="開始日を1年戻す" onclick={handleFillLineStartMinusOneYear}>-1y</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="開始日を1ヶ月進める" onclick={handleFillLineStartOneMonth}>+1m</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="開始日を1ヶ月戻す" onclick={handleFillLineStartMinusOneMonth}>-1m</button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-left est-td-date est-td-date_end">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_left">
+                                                <template if:true={item.isReadonly}>
+                                                    <span class="est-cell-static">{item.endDate}</span>
+                                                </template>
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-cell-field">
+                                                        <input
+                                                            type="text"
+                                                            class="est-cell-input"
+                                                            aria-label="終了日"
+                                                            placeholder="YYYY-MM-DD"
+                                                            value={item.endDate}
+                                                            maxlength="10"
+                                                            data-id={item.id}
+                                                            data-field="endDate"
+                                                            onchange={handleLineDateInputChange}
+                                                            required>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub est-cell-stack__sub_left">
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-date-shortcuts est-date-shortcuts_nowrap">
+                                                        <template if:true={item.canCopyDatesFromAbove}>
+                                                            <button type="button" class="est-date-chip" data-id={item.id} data-field="endDate" title="上の行の終了日をコピー" onclick={handleCopyDateFromAbove}>上</button>
+                                                        </template>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="終了日を1年進める" onclick={handleFillLineEndOneYear}>+1y</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="終了日を1年戻す" onclick={handleFillLineEndMinusOneYear}>-1y</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="終了日を1ヶ月進める" onclick={handleFillLineEndOneMonth}>+1m</button>
+                                                        <button type="button" class="est-date-chip" data-id={item.id} title="終了日を1ヶ月戻す" onclick={handleFillLineEndMinusOneMonth}>-1m</button>
+                                                        <button type="button" class="est-date-chip est-date-chip_muted" data-id={item.id} title="期間終了日をセット" onclick={handleFillLineEndFromContract}>end</button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-left est-td-invoice">
+                                        <div class="est-cell-stack">
+                                            <div class="est-cell-stack__main est-cell-stack__main_left">
+                                                <template if:true={item.isReadonly}>
+                                                    <span class="est-cell-static" title={item.invoiceType}>{item.invoiceType}</span>
+                                                </template>
+                                                <template if:false={item.isReadonly}>
+                                                    <div class="est-cell-field">
+                                                        <select
+                                                            class="est-cell-input est-cell-select"
+                                                            title={item.invoiceType}
+                                                            data-id={item.id}
+                                                            onchange={handleInvoiceTypeChange}
+                                                            disabled={item.isInvoiceTypeDisabled}
+                                                            required>
+                                                            <template if:true={item.isInvoiceTypeDisabled}>
+                                                                <option value="">商品選択後</option>
+                                                            </template>
+                                                            <template for:each={item.invoiceTypeOptions} for:item="option">
+                                                                <option
+                                                                    key={option.value}
+                                                                    value={option.value}
+                                                                    selected={option.isSelected}>
+                                                                    {option.label}
+                                                                </option>
+                                                            </template>
+                                                        </select>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="est-cell-stack__sub"></div>
+                                        </div>
+                                    </td>
+                                    <td class="est-td est-td-center est-td-actions">
+                                        <div class="est-cell-stack est-cell-stack_full">
+                                            <div class="est-row-actions">
+                                            <template if:true={item.canDuplicate}>
+                                                <lightning-button-icon
+                                                    icon-name="utility:copy"
+                                                    alternative-text="行をコピー"
+                                                    title="行をコピー"
+                                                    variant="border-filled"
+                                                    size="x-small"
+                                                    data-id={item.id}
+                                                    onclick={handleDuplicateRow}>
+                                                </lightning-button-icon>
+                                            </template>
+                                            <template if:true={item.canDelete}>
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    alternative-text="削除"
+                                                    title="削除"
+                                                    variant="border-filled"
+                                                    size="x-small"
+                                                    data-id={item.id}
+                                                    onclick={handleDeleteRow}>
+                                                </lightning-button-icon>
+                                            </template>
+                                            <template if:true={item.showAddRemakeButton}>
+                                                <lightning-button-icon
+                                                    icon-name="utility:add"
+                                                    alternative-text="Remakeを追加"
+                                                    title="Remakeを追加（期間分割）"
+                                                    variant="border-filled"
+                                                    size="x-small"
+                                                    data-pair-id={item.groupPairId}
+                                                    onclick={handleAddChangeRemake}>
+                                                </lightning-button-icon>
+                                            </template>
+                                        </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </template>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </template>
+
+        <template if:true={showRemarksSection}>
+            <section class="est-panel est-panel_remarks">
+                <div class="est-panel-header">
+                    <h2 class="est-panel-title">備考</h2>
+                </div>
+                <div class="est-panel-body est-remarks-body">
+                    <div class="est-field est-field_remark-master">
+                        <span class="est-label">見積備考マスタ</span>
+                        <lightning-record-picker
+                            key={remarkMasterPickerKey}
+                            label="見積備考マスタ"
+                            object-api-name="EstimateNoteMaster__c"
+                            value={estimateRemarkMasterId}
+                            variant="label-hidden"
+                            placeholder="マスタ名で検索..."
+                            matching-info={remarkMasterMatchingInfo}
+                            display-info={remarkMasterDisplayInfo}
+                            onchange={handleRemarkMasterChange}>
+                        </lightning-record-picker>
+                    </div>
+                    <div class="est-field est-field_remarks">
+                        <span class="est-label">見積備考</span>
+                        <lightning-textarea
+                            label="見積備考"
+                            value={estimateRemarks}
+                            variant="label-hidden"
+                            onchange={handleRemarksChange}
+                            max-length="32768">
+                        </lightning-textarea>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <template if:true={showTotalSummary}>
+            <div class="est-total">
+                <div class="est-total-info">
+                    <span class="est-total-label">見積総額</span>
+                    <span class="est-total-sub">{totalLineCount} 行</span>
+                </div>
+                <span class="est-total-amount">{formattedTotalAmount}</span>
+            </div>
+        </template>
+
+        <template if:true={isProductModalOpen}>
+            <section
+                role="dialog"
+                tabindex="-1"
+                aria-modal="true"
+                aria-labelledby="est-product-modal-title"
+                class="slds-modal slds-fade-in-open est-product-modal">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button
+                            type="button"
+                            class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="閉じる"
+                            onclick={handleCloseProductModal}>
+                            <lightning-icon
+                                icon-name="utility:close"
+                                alternative-text="閉じる"
+                                size="small">
+                            </lightning-icon>
+                            <span class="slds-assistive-text">閉じる</span>
+                        </button>
+                        <h2 id="est-product-modal-title" class="slds-modal__title slds-hyphenate">
+                            商品を選択
+                        </h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-record-picker
+                            label="商品名"
+                            object-api-name="Product2"
+                            value={productModalProductId}
+                            placeholder="商品名または商品コードで検索..."
+                            matching-info={matchingInfo}
+                            display-info={productDisplayInfo}
+                            onchange={handleModalProductChange}
+                            required>
+                        </lightning-record-picker>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button
+                            label="キャンセル"
+                            onclick={handleCloseProductModal}>
+                        </lightning-button>
+                        <lightning-button
+                            label="選択"
+                            variant="brand"
+                            disabled={isProductModalConfirmDisabled}
+                            onclick={handleConfirmProductModal}>
+                        </lightning-button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>BillingAccount__c.InvoiceDateAnchor__c</members>
+        <members>BillingAccount__c.InvoiceDateScope__c</members>
+        <members>BillingAccount__c.InvoiceClosingDayOfMonth__c</members>
+        <members>BillingAccount__c.InvoiceDateOffsetDays__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>62.0</version>
+</Package>

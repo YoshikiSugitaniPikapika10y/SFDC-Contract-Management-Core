@@ -1,0 +1,9 @@
+<template>
+    <lightning-modal-body class="modal-body">
+        <c-order-revert-wizard
+            record-id={recordId}
+            onrequestclose={handleRequestClose}
+            onorderrecordstatuschanged={handleOrderRecordStatusChanged}>
+        </c-order-revert-wizard>
+    </lightning-modal-body>
+</template>

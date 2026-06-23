@@ -1,0 +1,82 @@
+<template>
+    <div class="step-stack">
+        <lightning-card>
+            <div class="confirm-hero slds-p-around_medium">
+                <lightning-icon
+                    icon-name="utility:check"
+                    size="small"
+                    variant="inverse"
+                    class="confirm-icon">
+                </lightning-icon>
+                <h2 class="confirm-title">受注の最終確認</h2>
+                <p class="slds-text-body_regular slds-text-color_weak">
+                    「受注する」を押すとステータスが <strong>Ordered</strong> になり、請求商品の生成・アーカイブ・ARR 再計算が自動で実行されます。
+                </p>
+            </div>
+        </lightning-card>
+
+        <lightning-card title="実行される処理" icon-name="standard:process">
+            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <ul class="checklist">
+                    <li>契約履歴ステータスを Ordered に更新</li>
+                    <li>請求商品の自動生成（未請求分）</li>
+                    <li>旧見積履歴のアーカイブ</li>
+                    <li>契約サービスの受注履歴ポインタ更新</li>
+                </ul>
+            </div>
+        </lightning-card>
+
+        <lightning-card title="受注サマリ" icon-name="standard:summary">
+            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <lightning-layout multiple-rows>
+                    <lightning-layout-item
+                        size="12"
+                        medium-device-size="6"
+                        padding="around-small">
+                        <div class="field-label">契約履歴</div>
+                        <div class="field-value">{historyName}</div>
+                    </lightning-layout-item>
+                    <lightning-layout-item
+                        size="12"
+                        medium-device-size="6"
+                        padding="around-small">
+                        <div class="field-label">契約商品数</div>
+                        <div class="field-value">{productCount} 件</div>
+                    </lightning-layout-item>
+                    <lightning-layout-item
+                        size="12"
+                        medium-device-size="6"
+                        padding="around-small">
+                        <div class="field-label">請求アカウント</div>
+                        <div class="field-value">{billingAccountName}</div>
+                    </lightning-layout-item>
+                    <lightning-layout-item
+                        size="12"
+                        medium-device-size="6"
+                        padding="around-small">
+                        <div class="field-label">請求日</div>
+                        <div class="field-value">{billingDayLabel}</div>
+                    </lightning-layout-item>
+                    <lightning-layout-item
+                        size="12"
+                        medium-device-size="6"
+                        padding="around-small">
+                        <div class="field-label">支払サイト</div>
+                        <div class="field-value">{paymentTerm}</div>
+                    </lightning-layout-item>
+                    <lightning-layout-item
+                        size="12"
+                        medium-device-size="6"
+                        padding="around-small">
+                        <div class="field-label">土日祝スキップ</div>
+                        <div class="field-value">{adjustBusinessDayLabel}</div>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-card>
+
+        <div class="slds-notify slds-notify_alert slds-alert_info" role="status">
+            受注後は「請求結果」ステップから生成された請求明細を確認できます。
+        </div>
+    </div>
+</template>

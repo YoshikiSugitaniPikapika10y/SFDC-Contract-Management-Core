@@ -1,0 +1,142 @@
+<template>
+    <template if:true={showWizard}>
+        <div class={pageClass}>
+            <template if:true={isLoadingCopy}>
+                <div class="est-alert est-alert_info slds-m-around_medium">
+                    見積内容を読み込んでいます...
+                </div>
+            </template>
+
+            <template if:true={copyLoadError}>
+                <div class="est-alert est-alert_error slds-m-around_medium">
+                    {copyLoadError}
+                </div>
+            </template>
+
+            <template if:true={showMissingRecordError}>
+                <div class="est-alert est-alert_error">
+                    商談IDが指定されていません。商談画面から見積作成を開いてください。
+                </div>
+            </template>
+
+            <header class="est-header">
+                <div class="est-header-top">
+                    <div class="est-header-text">
+                        <p class="est-header-eyebrow">Estimate Wizard</p>
+                        <h1 class="est-header-title">見積作成</h1>
+                    </div>
+                    <div class="est-header-meta">
+                        <nav class="est-header-nav" aria-label="ウィザード操作">
+                            <template if:false={isStep1}>
+                                <button
+                                    type="button"
+                                    class="est-btn est-btn_header-secondary"
+                                    onclick={handlePrev}
+                                    disabled={isSaving}>
+                                    前へ
+                                </button>
+                            </template>
+                            <template if:false={isStep3}>
+                                <button
+                                    type="button"
+                                    class="est-btn est-btn_header-primary"
+                                    onclick={handleNext}
+                                    disabled={isNextDisabled}>
+                                    次へ
+                                </button>
+                            </template>
+                            <template if:true={isStep3}>
+                                <button
+                                    type="button"
+                                    class="est-btn est-btn_header-primary"
+                                    onclick={handleSaveClick}
+                                    disabled={isNextDisabled}>
+                                    保存
+                                </button>
+                            </template>
+                        </nav>
+                        <span class="est-type-badge">{typeLabel}</span>
+                        <button
+                            type="button"
+                            class="est-close-btn"
+                            title="閉じる"
+                            onclick={handleClose}>
+                            <lightning-icon icon-name="utility:close" size="x-small" alternative-text="閉じる"></lightning-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <nav class="est-stepper" aria-label="見積作成ステップ">
+                    <template for:each={stepItems} for:item="step">
+                        <div key={step.key} class="est-stepper-item">
+                            <template if:true={step.isClickable}>
+                                <button
+                                    type="button"
+                                    class={step.itemClass}
+                                    data-step={step.num}
+                                    onclick={handleStepClick}
+                                    title={step.label}>
+                                    <span class="est-step-num">{step.num}</span>
+                                    <span class="est-step-label">{step.label}</span>
+                                </button>
+                            </template>
+                            <template if:false={step.isClickable}>
+                                <div
+                                    class={step.itemClass}
+                                    aria-current={step.ariaCurrent}>
+                                    <span class="est-step-num">{step.num}</span>
+                                    <span class="est-step-label">{step.label}</span>
+                                </div>
+                            </template>
+                            <template if:true={step.showConnector}>
+                                <div class={step.connectorClass}></div>
+                            </template>
+                        </div>
+                    </template>
+                </nav>
+            </header>
+
+            <template if:true={hasValidationAlert}>
+                <div data-id="wizard-validation-alert">
+                    <c-estimate-validation-alert
+                        title={validationAlert.title}
+                        messages={validationAlert.messages}>
+                    </c-estimate-validation-alert>
+                </div>
+            </template>
+
+            <main class="est-body">
+                <template if:true={isStep1}>
+                    <c-estimate-create-modal1
+                        key={effectiveRecordId}
+                        record-id={effectiveRecordId}
+                        selected-type={wizardData.selectedType}
+                        preset-opportunity-name={wizardData.opportunityName}
+                        preset-account-name={wizardData.accountName}
+                        onchangefield={handleStep1Change}>
+                    </c-estimate-create-modal1>
+                </template>
+
+                <template if:true={isStep2}>
+                    <c-estimate-create-modal2
+                        key={step2RenderKey}
+                        record-id={effectiveRecordId}
+                        wizard-data={wizardData}
+                        selected-type={wizardData.selectedType}
+                        onchangefield={handleStep2Change}>
+                    </c-estimate-create-modal2>
+                </template>
+
+                <template if:true={isStep3}>
+                    <c-estimate-create-modal3
+                        key={step3RenderKey}
+                        record-id={effectiveRecordId}
+                        wizard-data={wizardData}
+                        selected-type={wizardData.selectedType}
+                        onchangefield={handleStep3Change}>
+                    </c-estimate-create-modal3>
+                </template>
+            </main>
+        </div>
+    </template>
+</template>

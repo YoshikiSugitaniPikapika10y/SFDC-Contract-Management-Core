@@ -1,0 +1,109 @@
+:host {
+    display: block;
+    --est-accent: #2563eb;
+    --est-border: #cbd5e1;
+    --est-border-strong: #94a3b8;
+    --est-muted: #64748b;
+    --est-surface: #ffffff;
+    --est-surface-muted: #f1f5f9;
+    --est-radius: 8px;
+}
+
+.est-card {
+    background: var(--est-surface);
+    border: 1px solid var(--est-border);
+    border-radius: var(--est-radius);
+    overflow: hidden;
+}
+
+.est-card-header {
+    padding: 0.875rem 1rem;
+    background: var(--est-surface);
+    border-bottom: 1px solid var(--est-border);
+}
+
+.est-card-title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #18181b;
+}
+
+.est-card-desc {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--est-muted);
+}
+
+.est-card-body {
+    padding: 1rem;
+    background: var(--est-surface);
+}
+
+.est-field-grid {
+    display: grid;
+    gap: 0.875rem;
+}
+
+.est-field-grid_3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 768px) {
+    .est-field-grid_3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.est-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+}
+
+.est-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--est-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.est-label_required::after {
+    content: ' *';
+    color: #dc2626;
+}
+
+.est-value {
+    padding: 0.5rem 0.625rem;
+    background: var(--est-surface-muted);
+    border: 1px solid var(--est-border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #18181b;
+    min-height: 2.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.est-control {
+    min-height: 2.25rem;
+}
+
+.est-select {
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid var(--est-border-strong);
+    border-radius: 6px;
+    background: var(--est-surface);
+    font-size: 0.875rem;
+    color: #18181b;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.est-select:focus {
+    outline: none;
+    border-color: var(--est-accent);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}

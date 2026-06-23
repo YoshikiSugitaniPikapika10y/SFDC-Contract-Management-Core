@@ -1,0 +1,162 @@
+<template>
+    <lightning-card title="請求商品オペレーション" icon-name="standard:product_item">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <p class="slds-text-body_small slds-m-bottom_small">
+                連携済（FREEE等エクスポート）と請求済を分けて管理します。ロック済み行は請求商品の再生成から保護されます。
+            </p>
+
+            <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_small">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-input
+                        type="date"
+                        label="請求日（開始）"
+                        value={invoiceDateFrom}
+                        onchange={handleInvoiceDateFromChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-input
+                        type="date"
+                        label="請求日（終了）"
+                        value={invoiceDateTo}
+                        onchange={handleInvoiceDateToChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-input
+                        type="date"
+                        label="連携日（任意）"
+                        value={exportDate}
+                        onchange={handleExportDateChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-input
+                        type="date"
+                        label="実際請求日（任意）"
+                        value={actualInvoiceDate}
+                        onchange={handleActualInvoiceDateChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-input
+                        type="number"
+                        label="行番号（開始）"
+                        value={rowRangeFrom}
+                        min="1"
+                        onchange={handleRowRangeFromChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-input
+                        type="number"
+                        label="行番号（終了）"
+                        value={rowRangeTo}
+                        min="1"
+                        onchange={handleRowRangeToChange}
+                    ></lightning-input>
+                </div>
+            </div>
+
+            <div class="slds-text-title_caps slds-m-bottom_x-small">FREEE連携（連携済）</div>
+            <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small button-row">
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="範囲を連携済にする"
+                        variant="brand"
+                        onclick={handleMarkRangeExported}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="選択を連携済にする"
+                        variant="brand-outline"
+                        onclick={handleMarkSelectedExported}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="選択の連携解除"
+                        onclick={handleClearSelectedExport}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+            </div>
+
+            <div class="slds-text-title_caps slds-m-bottom_x-small">実請求（請求済）</div>
+            <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium button-row">
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="範囲を請求済にする"
+                        variant="brand"
+                        onclick={handleMarkRangeInvoiced}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="範囲を未請求にする"
+                        onclick={handleMarkRangeUninvoiced}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="請求日範囲を選択"
+                        onclick={handleSelectByInvoiceDateRange}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="行番号範囲を選択"
+                        onclick={handleSelectByRowRange}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="選択を請求済にする"
+                        variant="brand-outline"
+                        onclick={handleMarkSelectedInvoiced}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        label="選択を未請求にする"
+                        onclick={handleMarkSelectedUninvoiced}
+                        disabled={isBusy}
+                    ></lightning-button>
+                </div>
+            </div>
+
+            <template if:true={isBusy}>
+                <lightning-spinner alternative-text="読み込み中" size="small"></lightning-spinner>
+            </template>
+
+            <template if:true={hasRows}>
+                <p class="slds-text-body_small slds-m-bottom_x-small">
+                    選択中: {selectedCount}件
+                </p>
+                <lightning-datatable
+                    key-field="id"
+                    data={rows}
+                    columns={columns}
+                    selected-rows={selectedRowIds}
+                    onrowselection={handleRowSelection}
+                    max-row-selection="500"
+                    show-row-number-column="false"
+                ></lightning-datatable>
+            </template>
+
+            <template if:false={hasRows}>
+                <div class="slds-text-body_regular slds-p-vertical_medium">
+                    請求商品がありません。
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

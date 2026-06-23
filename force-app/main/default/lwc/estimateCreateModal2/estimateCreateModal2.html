@@ -1,0 +1,97 @@
+<template>
+    <section class="est-card">
+        <div class="est-card-header">
+            <h2 class="est-card-title">Step 2 — 契約情報</h2>
+            <template if:true={isNewType}>
+                <p class="est-card-desc">新規の契約サービスと契約履歴の情報を入力してください。</p>
+            </template>
+            <template if:false={isNewType}>
+                <p class="est-card-desc">変更のベースとなる契約履歴を選択・確認してください。</p>
+            </template>
+        </div>
+
+        <template if:true={isNewType}>
+            <div class="est-card-body">
+                <div class="est-field-grid est-field-grid_2">
+                    <div class="est-field">
+                        <span class="est-label est-label_required">契約サービス名</span>
+                        <lightning-input
+                            type="text"
+                            value={contractServiceName}
+                            variant="label-hidden"
+                            onchange={handleServiceNameChange}
+                            required>
+                        </lightning-input>
+                    </div>
+                    <div class="est-field">
+                        <span class="est-label est-label_required">契約履歴名</span>
+                        <lightning-input
+                            type="text"
+                            value={contractHistoryName}
+                            variant="label-hidden"
+                            onchange={handleHistoryNameChange}
+                            required>
+                        </lightning-input>
+                    </div>
+                    <div class="est-field">
+                        <span class="est-label">初回 Version</span>
+                        <div class="est-value">{displayNewHistoryVersion}</div>
+                    </div>
+                    <div class="est-field est-field_wide">
+                        <span class="est-label">請求アカウント</span>
+                        <lightning-record-picker
+                            label="請求アカウント"
+                            object-api-name="BillingAccount__c"
+                            value={billingAccountId}
+                            variant="label-hidden"
+                            placeholder="請求アカウントを検索..."
+                            matching-info={billingAccountMatchingInfo}
+                            filter={billingAccountFilter}
+                            disabled={isBillingAccountPickerDisabled}
+                            onchange={handleBillingAccountChange}>
+                        </lightning-record-picker>
+                        <template if:true={showBillingAccountInvoiceSummary}>
+                            <p class="est-billing-hint">{billingAccountInvoiceSummary}</p>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template if:false={isNewType}>
+            <div class="est-card-body">
+                <div class="est-field-grid est-field-grid_lookup">
+                    <div class="est-field est-field_wide">
+                        <span class="est-label est-label_required">契約サービス</span>
+                        <lightning-record-picker
+                            label="契約サービス"
+                            object-api-name="ContractService__c"
+                            value={contractServiceId}
+                            variant="label-hidden"
+                            placeholder="契約サービスを検索..."
+                            matching-info={matchingInfo}
+                            onchange={handleServiceLookupChange}
+                            required>
+                        </lightning-record-picker>
+                    </div>
+                    <div class="est-field">
+                        <span class="est-label">ベース契約履歴</span>
+                        <div class="est-value">{autoHistoryName}</div>
+                    </div>
+                    <div class="est-field">
+                        <span class="est-label">ベース Version</span>
+                        <div class="est-value">{displayBaseHistoryVersion}</div>
+                    </div>
+                    <div class="est-field">
+                        <span class="est-label">タイプ</span>
+                        <div class="est-type-list">
+                            <span class={changeBadgeClass}>Change</span>
+                            <span class={renewBadgeClass}>Renew</span>
+                            <span class={cancelBadgeClass}>Cancel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </section>
+</template>

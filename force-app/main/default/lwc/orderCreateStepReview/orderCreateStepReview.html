@@ -1,0 +1,20 @@
+<template>
+    <template if:true={hasContext}>
+        <lightning-card title="編集可能な項目" icon-name="standard:note">
+            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <template if:true={showHistoryFields}>
+                    <c-estimate-wizard-custom-field-grid
+                        fields={historyFieldInputs}
+                        field-target="contractHistory"
+                        oncustomfieldchange={handleCustomFieldChange}>
+                    </c-estimate-wizard-custom-field-grid>
+                </template>
+                <template if:false={showHistoryFields}>
+                    <p class="slds-text-body_regular slds-text-color_weak">
+                        編集可能な項目が定義されていません。
+                    </p>
+                </template>
+            </div>
+        </lightning-card>
+    </template>
+</template>

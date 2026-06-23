@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ContractHistory__c.ApplicationDate__c</members>
+        <members>BillingAccount__c.EmailAddress__c</members>
+        <members>BillingAccount__c.InvoiceSendMethod__c</members>
+        <members>InvoiceProduct__c.LastestConnectedDate_del__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>62.0</version>
+</Package>

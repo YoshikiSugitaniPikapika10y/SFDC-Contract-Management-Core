@@ -1,0 +1,6 @@
+.modal-body {
+    padding: 0;
+    height: min(80vh, 42rem);
+    max-height: min(80vh, 42rem);
+    overflow: hidden;
+}

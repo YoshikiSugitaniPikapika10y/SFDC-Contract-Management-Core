@@ -1,0 +1,31 @@
+<template>
+    <section class="est-card">
+        <div class="est-card-header">
+            <h2 class="est-card-title">Step 1 — 基本情報</h2>
+            <p class="est-card-desc">商談情報を確認し、見積タイプを選択してください。</p>
+        </div>
+        <div class="est-card-body">
+            <div class="est-field-grid est-field-grid_3">
+                <div class="est-field">
+                    <span class="est-label">取引先名</span>
+                    <div class="est-value">{displayAccountName}</div>
+                </div>
+                <div class="est-field">
+                    <span class="est-label">商談名</span>
+                    <div class="est-value">{displayOpportunityName}</div>
+                </div>
+                <div class="est-field">
+                    <span class="est-label est-label_required">タイプ</span>
+                    <div class="est-control">
+                        <select class="est-select" onchange={handleTypeChange}>
+                            <option value="New" selected={isNewSelected}>New</option>
+                            <option value="Change" selected={isChangeSelected}>Change</option>
+                            <option value="Renew" selected={isRenewSelected}>Renew</option>
+                            <option value="Cancel" selected={isCancelSelected}>Cancel</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>
