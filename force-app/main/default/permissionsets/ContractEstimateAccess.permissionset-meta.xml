@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>Field access for contract estimate Apex tests</description>
     <fieldPermissions>
@@ -69,6 +69,21 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>BillingAccount__c.BillingAddressee__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BillingAccount__c.BillingEmailBcc__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BillingAccount__c.BillingEmailCc__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BillingAccount__c.BillingEmailTo__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
